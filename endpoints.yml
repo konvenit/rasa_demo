@@ -45,7 +45,7 @@ action_endpoint:
 nlg:
   type: rephrase
   llm:
-    model_group: rasa_command_generation_model
+    model_group: openai-direct
 
 model_groups:
   - id: rasa_command_generation_model
@@ -53,3 +53,8 @@ model_groups:
       - provider: rasa
         model: rasa/cmd_gen_codellama_13b_calm_demo
         api_base: "https://tutorial-llm.rasa.ai"
+  - id: openai-direct
+    models:
+      - provider: openai
+        model: gpt-4-0613
+        api_key: ${OPENAI_API_KEY}
