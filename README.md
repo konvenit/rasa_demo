@@ -5,7 +5,7 @@
 
 ```
   cp .env.development .env
-  # and  add your RASA_PRO_LICENSE
+  # add your RASA_PRO_LICENSE to .env
 ```
 
 ### init project
