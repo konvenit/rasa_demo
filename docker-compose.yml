@@ -1,0 +1,17 @@
+services:
+  rasa:
+    image: rasa/rasa-pro:3.11.3
+    volumes:
+      - .:/app
+    command: run --enable-api -m models --cors "*" --debug
+    ports:
+      - '5005:5005'
+    env_file:
+      - .env
+
+  webchat:
+    image: nginx
+    ports:
+      - 80:80
+    volumes:
+      - ./web:/usr/share/nginx/html:ro

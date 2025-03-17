@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <title>Rasa Chatbot Widget</title>
+    <style>
+      /* Basic styling to position the widget */
+      #webchat {
+        position: fixed;
+        bottom: 20px;
+        right: 20px;
+        z-index: 1000;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Welcome to a  Chatbot Page</h1>
+    <p>Interact with our chatbot using the widget below.</p>
+    <a href="rasa_widget.html">Test official Rasa Widget</a>
+    <!-- Container for the chatbot widget -->
+    <div id="webchat"></div>
+
+    <!-- Include the Rasa Webchat library from a CDN -->
+    <!-- https://www.npmjs.com/package/rasa-webchat  -->
+
+    <script src="https://cdn.jsdelivr.net/npm/rasa-webchat/lib/index.js"></script>
+    <script>
+      // Initialize the webchat widget
+      window.WebChat.default({
+                  selector: "#webchat",
+                  initPayload: '/greet',
+                  customData: { userId: 1, balance: 50 },
+                  socketUrl: "http://localhost:5005",
+                  socketPath: "/socket.io/",
+                  title: "Some Title"
+              });
+    </script>
+  </body>
+</html>
