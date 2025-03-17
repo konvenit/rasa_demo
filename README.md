@@ -1,6 +1,5 @@
 # rase demo
 
-
 ## setup
 
 ```
@@ -18,15 +17,16 @@ docker run -v ./:/app \
 
 ```
 
-## train and inspect
+### train
 
 ```
 docker run -v ./:/app \
             -e RASA_PRO_LICENSE=${RASA_PRO_LICENSE} \
             rasa/rasa-pro:3.11.3 \
             train
+```
 
-# inspect
+###  inspect for debugging
 docker run -v ./:/app \
             -p 5005:5005 \
             -e RASA_PRO_LICENSE=${RASA_PRO_LICENSE} \
@@ -35,3 +35,14 @@ docker run -v ./:/app \
 ```
 
 now you can visit http://localhost:5005
+
+## run web gui
+
+```
+# maybe you have to train your models first. see train command
+
+docker compose up
+
+```
+
+open http://localhost

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HTML Example</title>
+    <script
+      type="module"
+      src="https://unpkg.com/@rasahq/chat-widget-ui/dist/rasa-chatwidget/rasa-chatwidget.esm.js"
+    ></script>
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/@rasahq/chat-widget-ui/dist/rasa-chatwidget/rasa-chatwidget.css"
+    />
+  </head>
+  <body>
+    <h1>Welcome to official RASA Wiget</h1>
+    <a href="https://github.com/RasaHQ/chat-widget">https://github.com/RasaHQ/chat-widget</a>
+    <p>Interact with our chatbot using the widget below.</p>
+    <h3>I DON'T KNOW HOW INJECT THE CURRENT USER</h3>
+    <rasa-chatbot-widget server-url="http://localhost:5005" sender-id="666" widget-title="Fuck You"></rasa-chatbot-widget>
+  </body>
+</html>
