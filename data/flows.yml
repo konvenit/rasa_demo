@@ -1,24 +1,39 @@
 flows:
-  transfer_money:
-    description: Help users send money to friends and family.
+  welcome_user:
+    description: "Greet the user"
     steps:
-      - collect: recipient
-      - collect: amount
-        description: the number of US dollars to send
-      - action: action_check_sufficient_funds
+      - action: "utter_welcome"
+      - link: "change_validity_date"
+  
+  change_validity_date:
+    name: "Tender Validity Date Change"
+    description: "it is necessary to extern the validity date of a tender."
+    persisted_slots:
+      - tender_id
+      - new_date
+    steps:
+      - collect: tender_id
+        id: get_tender_id
+        description: the tender to change the validity date
+        next: check_tender_id
+      - action: action_validity_of_new_date
+        id: check_tender_id
         next:
-          - if: not slots.has_sufficient_funds
+          - if: not date_valid
             then:
-              - action: utter_insufficient_funds
-                next: END
+              - action: utter_invalid_date
+              - set_slots:
+                  - date: null
+                next: get_tender_id
           - else: final_confirmation
       - collect: final_confirmation
         id: final_confirmation
         next:
           - if: not slots.final_confirmation
             then:
-              - action: utter_transfer_cancelled
+              - action: utter_action_cancelled
                 next: END
-          - else: transfer_successful
-      - action: utter_transfer_complete
-        id: transfer_successful
+          - else: action_successful
+      - action: action_update_validity_date
+        id: action_successful
+

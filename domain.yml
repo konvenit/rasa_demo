@@ -2,6 +2,7 @@ version: "3.1"
 
 actions:
   - action_check_sufficient_funds
+  - action_validity_of_new_date
 
 slots:
   recipient:
@@ -22,9 +23,25 @@ slots:
     type: bool
     mappings:
       - type: custom
+  user_intent:
+    type: categorical
+    values:
+      - change_validity_date
+      - other
 
+  tender_id:
+    type: text
+
+  new_date:
+    type: text
 
 responses:
+  utter_welcome:
+    - text: "Welcome!"
+
+  utter_ask_tender_id:
+    - text: What's the tender id of project?
+
   utter_ask_recipient:
     - text: "Who would you like to send money to?"
 
