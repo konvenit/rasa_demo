@@ -12,7 +12,7 @@ flows:
         action: utter_confirm_tender
       - collect: tender_confirmation
         next:
-          - if: slot.tender_confirmation == true
+          - if: "slots.tender_confirmation == true"  # Correct predicate
             then:
               - action: utter_give_information
                 id: give_information
@@ -20,7 +20,7 @@ flows:
           - else:
               - action: utter_tender_rejected
                 next: END
-  
+
       - action: utter_suggest_validity_date
         id: suggest_validity_date
         next: suggest_hotel_selection
@@ -36,7 +36,7 @@ flows:
       - collect: final_confirmation
         id: collect_final_confirmation
         next:
-          - if: slot.final_confirmation == true
+          - if: "slots.final_confirmation == true"  # Correct predicate
             then:
               - action: action_update_validity_extension
                 id: action_update_validity_extension
@@ -48,6 +48,3 @@ flows:
       - action: utter_extension_success
         id: display_success
         next: END
-
-
-

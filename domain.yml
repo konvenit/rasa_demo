@@ -5,40 +5,42 @@ actions:
   - action_fetch_tender_details
   - action_collect_selected_hotels
   - action_update_validity_extension
-  
+  - utter_welcome
+  - utter_give_information
+  - utter_suggest_validity_date
+  - utter_confirm_tender
+  - utter_suggest_hotel_selection
+  - utter_confirm_validity_extension
+  - utter_extension_success
+  - utter_tender_rejected
+  - utter_extension_cancelled
+  - utter_free_chitchat_response
+
+
+
 slots:
   tender_id:
     type: text
     mappings:
       - type: from_text
-        conditions:
-          - active_loop: action_fetch_tender_details
   validity_extension_offer:
-    type: date
-    mappings:
-      - type: from_action
-        action: action_fetch_tender_details
+    type: text
   project_name:
     type: text
-    mappings:
-      - type: from_action
-        action: action_fetch_tender_details
   project_id:
     type: text
-    mappings:
-      - type: from_action
-        action: action_fetch_tender_details
   tender_type:
     type: text
-    mappings:
-      - type: from_action
-        action: action_fetch_tender_details
   selected_hotels:
     type: list
-  final_confirmation:
-    type: bool
   tender_confirmation:
     type: bool
+    influence_conversation: true
+    initial_value: false
+  final_confirmation:
+    type: bool
+    influence_conversation: true
+    initial_value: false
   selected_hotels_contacts:
     type: text
 

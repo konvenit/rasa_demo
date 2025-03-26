@@ -2,6 +2,8 @@ recipe: default.v1
 language: en
 pipeline:
 - name: SingleStepLLMCommandGenerator
+- name: NLUCommandAdapter   # Add the NLUCommandAdapter to the pipeline
+
   llm:
     model_group: openai-direct
   flow_retrieval:
