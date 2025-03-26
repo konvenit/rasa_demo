@@ -1,24 +1,54 @@
 flows:
-  transfer_money:
-    description: Help users send money to friends and family.
+  change_validity_date:
+    name: Tender Validity Date Change
+    description: Change the validity date and handle related tasks
+    persisted_slots:
+      - tender_confirmation
+      - final_confirmation
     steps:
-      - collect: recipient
-      - collect: amount
-        description: the number of US dollars to send
-      - action: action_check_sufficient_funds
+      - action: action_fetch_tender_details
+        id: get_tenders
+        next: confirm_tender
+      - action: utter_confirm_tender
+        id: confirm_tender
+      - collect: tender_confirmation
         next:
-          - if: not slots.has_sufficient_funds
+          - if: slot.tender_confirmation == true
             then:
-              - action: utter_insufficient_funds
+              - action: utter_give_information
+                id: give_information
+                next: suggest_validity_date
+          - else:
+              - action: utter_tender_rejected
                 next: END
-          - else: final_confirmation
+  
+      - action: utter_suggest_validity_date
+        id: suggest_validity_date
+        next: suggest_hotel_selection
+      - action: utter_suggest_hotel_selection
+        id: suggest_hotel_selection
+        next: collect_hotels
+      - action: action_collect_selected_hotels
+        id: collect_hotels
+        next: confirm_extension
+      - action: utter_confirm_validity_extension
+        id: confirm_extension
+        next: collect_final_confirmation
       - collect: final_confirmation
-        id: final_confirmation
+        id: collect_final_confirmation
         next:
-          - if: not slots.final_confirmation
+          - if: slot.final_confirmation == true
             then:
-              - action: utter_transfer_cancelled
+              - action: action_update_validity_extension
+                id: action_update_validity_extension
+                next: display_success
+          - else:
+              - action: utter_extension_cancelled
                 next: END
-          - else: transfer_successful
-      - action: utter_transfer_complete
-        id: transfer_successful
+      
+      - action: utter_extension_success
+        id: display_success
+        next: END
+
+
+

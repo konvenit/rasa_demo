@@ -3,11 +3,11 @@ language: en
 pipeline:
 - name: SingleStepLLMCommandGenerator
   llm:
-    model_group: openai-direct
+    model_group: rasa_command_generation_model
   flow_retrieval:
     active: false
 
 policies:
 - name: FlowPolicy
 #  - name: EnterpriseSearchPolicy
-assistant_id: 20250312-094401-equidistant-ketchup
+assistant_id: 20250324-175858-polite-oboe
