@@ -7,10 +7,9 @@ flows:
       - final_confirmation
     steps:
       - action: action_fetch_tender_details
-        id: get_tenders
         next: confirm_tender
-      - action: utter_confirm_tender
-        id: confirm_tender
+      - id: confirm_tender
+        action: utter_confirm_tender
       - collect: tender_confirmation
         next:
           - if: slot.tender_confirmation == true

@@ -1,5 +1,6 @@
 version: "3.1"
-
+intents:
+  - change_validity_date
 actions:
   - action_fetch_tender_details
   - action_collect_selected_hotels
