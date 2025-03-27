@@ -1,15 +1,12 @@
 recipe: default.v1
-language: de
+language: en
 pipeline:
 - name: SingleStepLLMCommandGenerator
   llm:
-    model_group: openai_direct
+    model_group: openai-direct
   flow_retrieval:
-    embeddings:
-      model_group: openai_embeddings
-  user_input:
-    max_characters: 420
+    active: false
 
 policies:
 - name: FlowPolicy
-assistant_id: 20250319-144006-sour-pulsar
+assistant_id: 20250312-094401-equidistant-ketchup

@@ -5,7 +5,7 @@ from rasa_sdk import Action, Tracker
 from rasa_sdk.events import SlotSet
 from rasa_sdk.executor import CollectingDispatcher
 
-from queries import get_tenders, create_validity_extension, format_date
+from .queries import get_tenders, create_validity_extension, format_date
 
 
 class ActionFetchTenderDetails(Action):
@@ -19,11 +19,10 @@ class ActionFetchTenderDetails(Action):
     def run(
         self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[str, Any]
     ) -> List[Dict[Text, Any]]:
-        project_id = tracker.get_slot("project_id")
-        
-        if not project_id:
-            return []
-        
+        metadata = tracker.get_slot("session_started_metadata")
+        project_id = metadata["projectId"]
+        user_id = metadata.get("userId")
+
         try:
             tender_response = get_tenders(project_id)
             
@@ -40,7 +39,7 @@ class ActionFetchTenderDetails(Action):
                 SlotSet("tender_id", str(tender_response.tender_id)),
                 SlotSet("tender_type", tender_response.service_type_name),
                 SlotSet("validity_expired", tender_response.validity_expired),
-                SlotSet("validity_extension_offer", tender_response.new_offer_valid_until),
+                SlotSet("validity_extension_offer", tender_response.offer_valid_until),
                 SlotSet("offer_valid_until", tender_response.offer_valid_until),
                 SlotSet("hotel_list", hotels)
             ]

@@ -1,64 +1,79 @@
 version: "3.1"
-
+intents:
+  - change_validity_date
 actions:
-  - action_check_sufficient_funds
-  - action_validity_of_new_date
+  - action_fetch_tender_details
+  - action_collect_selected_hotels
+  - action_update_validity_extension
+  - utter_welcome
+  - utter_give_information
+  - utter_suggest_validity_date
+  - utter_confirm_tender
+  - utter_suggest_hotel_selection
+  - utter_confirm_validity_extension
+  - utter_extension_success
+  - utter_tender_rejected
+  - utter_extension_cancelled
+  - utter_free_chitchat_response
+
+
 
 slots:
-  recipient:
-    type: text
-    mappings:
-      - type: from_llm
-  amount:
-    type: float
-    mappings:
-      - type: from_llm
-
-  final_confirmation:
-    type: bool
-    mappings:
-      - type: from_llm
-
-  has_sufficient_funds:
-    type: bool
-    mappings:
-      - type: custom
-  user_intent:
-    type: categorical
-    values:
-      - change_validity_date
-      - other
-
   tender_id:
     type: text
-
-  new_date:
+    mappings:
+      - type: from_llm
+  validity_extension_offer:
+    type: text
+  project_name:
+    type: text
+  project_id:
+    type: text
+    mappings:
+      - type: custom
+        action: action_fetch_tender_details
+  tender_type:
+    type: text
+  selected_hotels:
+    type: list
+  tender_confirmation:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+  final_confirmation:
+    type: bool
+    influence_conversation: true
+    initial_value: false
+  selected_hotels_contacts:
     type: text
 
 responses:
   utter_welcome:
-    - text: "Welcome!"
+    - text: "Hello! I can help you extend the validity date of your tender. How can I assist you today?"
 
-  utter_ask_tender_id:
-    - text: What's the tender id of project?
+  utter_give_information:
+    - text: "The validity date of the project and offers is expired. To book a hotel you need to extend the validity date. Due to approval processes, we suggest to prolong for at least a few days."
 
-  utter_ask_recipient:
-    - text: "Who would you like to send money to?"
+  utter_suggest_validity_date:
+    - text: "Should I prolong the validity date to {validity_extension_offer}?"
 
-  utter_ask_amount:
-    - text: "How much money would you like to send?"
+  utter_confirm_tender:
+    - text: "I see, do you want to book a {tender_type} for the project {project_id} - {project_name}?"
 
-  utter_transfer_complete:
-    - text: "All done. {amount} has been sent to {recipient}."
+  utter_suggest_hotel_selection:
+    - text: "Which hotels should be asked to prolong their offers to {validity_extension_offer}? Please select!"
 
-  utter_ask_final_confirmation:
-    - text: "Please confirm: you want to transfer {amount} to {recipient}?"
-  utter_transfer_cancelled:
-    - text: "Your transfer has been cancelled."
+  utter_confirm_validity_extension:
+    - text: "Your request to extend the validity date to {validity_extension_offer} for the selected hotels\n{selected_hotels}\nis being submitted. The hotels will be notified and asked to confirm the extension. You will receive a notification once they respond.\n\nDo you confirm?"
 
-  utter_insufficient_funds:
-    - text: "You do not have enough funds to make this transaction."
+  utter_extension_success:
+    - text: "I have changed the validity date to {validity_extension_offer} and requested new offers. Normally it takes up to 1 business day for suppliers to answer.\n\nIf it is urgent don't hesitate to call the hotel. The contact information for hotels are below;\n{hotel_contacts}"
 
+  utter_tender_rejected:
+    - text: "I understand you don't want to proceed with this tender. Is there anything else I can help you with?"
+
+  utter_extension_cancelled:
+    - text: "I understand you want to cancel the validity extension. Is there anything else I can help you with?"
 
   utter_free_chitchat_response:
     - text: "placeholder"

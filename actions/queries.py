@@ -3,7 +3,7 @@ from typing import List, Optional
 import requests
 from datetime import datetime
 
-BACKEND_URL = "http://localhost:3002/api/rasa/v1"
+BACKEND_URL = "http://host.docker.internal:3002/api/rasa/v1"
 
 class ValidityExtensionRequest(BaseModel):
     person_id: str
@@ -16,7 +16,6 @@ class TenderResponse(BaseModel):
     service_type_name: str
     offer_valid_until: str
     validity_expired: bool
-    new_offer_valid_until: str
     project_name: str
     negotiations: List[dict]
 
@@ -33,11 +32,8 @@ def get_tenders(project_id: str) -> TenderResponse:
     Raises:
         requests.exceptions.RequestException: If the request fails
     """
-    url = f"{BACKEND_URL}/validity_extensions"
-    params = {"project_id": project_id}
-    
-    response = requests.get(url, params=params)
-    response.raise_for_status()
+    url = f"{BACKEND_URL}/validity_extensions?project_id={project_id}"
+    response = requests.get(url)
     
     return TenderResponse(**response.json())
 

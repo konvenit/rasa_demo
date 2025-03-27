@@ -42,20 +42,20 @@ action_endpoint:
 #  queue: queue
 
 # Allow rephrasing of responses using a Rasa-hosted model
-nlg:
-  type: rephrase
-  llm:
-    model_group: openai_direct
+# nlg:
+#   type: rephrase
+#   llm:
+#     model_group: rasa_command_generation_model
 
+# model_groups:
+#   - id: rasa_command_generation_model
+#     models:
+#       - provider: rasa
+#         model: rasa/cmd_gen_codellama_13b_calm_demo
+#         api_base: "https://tutorial-llm.rasa.ai"
 model_groups:
-  - id: openai_direct
+  - id: openai-direct
     models:
-      - model: "gpt-4o-mini"
-        provider: "openai"
-        timeout: 7
-        temperature: 0.0
-  - id: openai_embeddings
-    models:
-      - model: "text-embedding-ada-002"
-        provider: "openai"
+      - provider: openai
+        model: openai/gpt-4
         api_key: ${OPENAI_API_KEY}
