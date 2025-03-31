@@ -25,6 +25,9 @@ slots:
 
 
 responses:
+  utter_greet:
+    - text: "Hello! How can I assist you today?"
+
   utter_ask_recipient:
     - text: "Who would you like to send money to?"
 
@@ -36,6 +39,7 @@ responses:
 
   utter_ask_final_confirmation:
     - text: "Please confirm: you want to transfer {amount} to {recipient}?"
+    
   utter_transfer_cancelled:
     - text: "Your transfer has been cancelled."
 
