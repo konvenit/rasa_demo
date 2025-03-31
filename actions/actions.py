@@ -47,6 +47,32 @@ class ActionFetchTenderDetails(Action):
         except Exception as e:
             print(f"Error retrieving tender details: {str(e)}")
             return []
+        
+class ActionCollectSelectedHotels(Action):
+    def name(self):
+        return "action_collect_selected_hotels"
+
+    def run(self, dispatcher, tracker, domain):
+        hotels_dict = tracker.get_slot("hotels_list")
+        user_input = tracker.latest_message.get("text", "").strip().lower()
+
+        if not hotels_dict:
+            dispatcher.utter_message(text="No hotels found.")
+            return []
+
+        # Determine selected hotels
+        if user_input == "all":
+            selected_hotels = list(hotels_dict.values())  # List of all hotel IDs
+        elif user_input in hotels_dict:
+            selected_hotels = [hotels_dict[user_input]]  # Single hotel ID
+        else:
+            dispatcher.utter_message(text="Invalid selection. Please choose from the given options.")
+            return []
+
+        dispatcher.utter_message(text=f"You have selected: {selected_hotels}")
+
+        return [SlotSet("selected_hotels", selected_hotels)]
+        
 
 
 class ActionExtendValidity(Action):

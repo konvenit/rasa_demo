@@ -2,17 +2,17 @@ flows:
   change_validity_date:
     name: Tender Validity Date Change
     description: Change the validity date and handle related tasks
-    persisted_slots:
-      - tender_confirmation
-      - final_confirmation
+  
     steps:
+      - action: utter_welcome
       - action: action_fetch_tender_details
         next: confirm_tender
-      - id: confirm_tender
-        action: utter_confirm_tender
+      - action: utter_confirm_tender
+        id: confirm_tender
       - collect: tender_confirmation
+        ask_before_filling: true
         next:
-          - if: "slots.tender_confirmation == true"  # Correct predicate
+          - if: "slots.tender_confirmation"   # Correct predicate
             then:
               - action: utter_give_information
                 id: give_information
@@ -23,18 +23,24 @@ flows:
 
       - action: utter_suggest_validity_date
         id: suggest_validity_date
-        next: suggest_hotel_selection
-      - action: utter_suggest_hotel_selection
-        id: suggest_hotel_selection
-        next: collect_hotels
+      - collect: date_confirmation
+        ask_before_filling: true
+        next: 
+          - if: "slots.date_confirmation"   # Correct predicate
+            then:
+              - action: utter_suggest_hotel_selection
+                id: suggest_hotel_selection
+                next: collect_hotels
+          - else:
+              - action: utter_ask_new_date
+                next: END
       - action: action_collect_selected_hotels
         id: collect_hotels
         next: confirm_extension
       - action: utter_confirm_validity_extension
         id: confirm_extension
-        next: collect_final_confirmation
       - collect: final_confirmation
-        id: collect_final_confirmation
+        ask_before_filling: true
         next:
           - if: "slots.final_confirmation == true"  # Correct predicate
             then:
