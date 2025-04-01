@@ -11,29 +11,30 @@ flows:
               - action: utter_give_information
                 id: give_information
                 next: suggest_validity_date
-          - else:
+          - else:  # Test this
               - action: utter_tender_notexpired
                 next: END
       - action: utter_suggest_validity_date
         id: suggest_validity_date
-        next: hotels_list
-      - action: action_list_hotels
-        id: hotels_list
+        next: date_confirmation
       - collect: date_confirmation
+        id: date_confirmation
         ask_before_filling: true
         next: 
           - if: "slots.date_confirmation is not true"   # Correct predicate
             then:
-              - collect: new_date
+              - collect: new_date  # test date conversion
                 ask_before_filling: true
               - set_slots:
                 - validity_extension_offer: new_date    
-                next: suggest_hotel_selection           
-          - else: suggest_hotel_selection
-      - action: utter_suggest_hotel_selection
-        id: suggest_hotel_selection
+                next: collect_selected_hotels           
+          - else: collect_selected_hotels
       - collect: selected_hotels
+        id: collect_selected_hotels
         ask_before_filling: true
+        next: get_selected_hotels
+      - action: action_get_selected_hotels
+        id: get_selected_hotels
         next: confirm_extension
       - action: utter_confirm_validity_extension
         id: confirm_extension
@@ -44,11 +45,16 @@ flows:
             then:
               - action: action_update_validity_extension
                 id: action_update_validity_extension
-                next: display_success
-          - else:
-              - action: utter_extension_cancelled
-                next: END
-      
-      - action: utter_extension_success
-        id: display_success
+                next: 
+                  - if: "slots.finalized_with_success"
+                    then:
+                      - action: utter_extension_success
+                        next: END
+                  - else:
+                      - action: utter_extension_failure
+                        next: END
+          - else: extension_cancelled
+      - action: utter_extension_cancelled
+        id: extension_cancelled
         next: END
+

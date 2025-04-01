@@ -2,8 +2,12 @@ from pydantic import BaseModel
 from typing import List, Optional
 import requests
 from datetime import datetime
+import json
+import os
 
 BACKEND_URL = "http://host.docker.internal:3002/api/rasa/v1"
+API_URL = "https://api.yourgptservice.com/v1/chat/completions"
+
 
 class ValidityExtensionRequest(BaseModel):
     person_id: str
@@ -15,6 +19,7 @@ class TenderResponse(BaseModel):
     tender_id: int
     service_type_name: str
     offer_valid_until: str
+    new_offer_valid_until: Optional[str] = None
     validity_expired: bool
     project_name: str
     negotiations: List[dict]
@@ -61,8 +66,8 @@ def create_validity_extension(
     url = f"{BACKEND_URL}/validity_extensions"
     
     data = ValidityExtensionRequest(
-        person_id=person_id,
-        tender_id=tender_id,
+        person_id=str(person_id),
+        tender_id=str(tender_id),
         offer_valid_until=offer_valid_until,
         negotiation_ids=negotiation_ids
     )
@@ -83,3 +88,63 @@ def format_date(date_obj: datetime) -> str:
         str: Formatted date string
     """
     return date_obj.strftime("%d.%m.%Y")
+
+def parse_hotel_selection(user_input: str, hotel_count: int) -> List[int]:
+    """
+    Use GPT-4o-mini to parse user input and return hotel indices.
+    
+    Args:
+        user_input: The user's input text about which hotels they want to select
+        hotel_count: The total number of hotels available
+        
+    Returns:
+        List[int]: List of hotel indices (1-based)
+        
+    Raises:
+        requests.exceptions.RequestException: If the API request fails
+    """
+        
+    prompt = f"""
+    Based on the user's input: "{user_input}", determine which hotel indices they want to select.
+    
+    Context:
+    - There are {hotel_count} hotels available, numbered from 1 to {hotel_count}
+    - The user's input could be in formats like: "all", "1,2,3", "only 1", "1 and 2"
+    - If the input is "all", return all indices from 1 to {hotel_count}
+    - Return only valid indices between 1 and {hotel_count}
+    
+    Return only a JSON array of integers representing the selected hotel indices. For example: [1, 3, 5]
+    """
+    
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {os.environ['OPENAI_API_KEY']}"
+    }
+    
+    payload = {
+        "model": "gpt-4o-mini",
+        "messages": [{"role": "user", "content": prompt}],
+        "temperature": 0.1,  # Low temperature for more deterministic responses
+        "response_format": {"type": "json_object"}
+    }
+    
+    try:
+        response = requests.post(API_URL, headers=headers, json=payload)
+        response.raise_for_status()
+        
+        result = response.json()
+        indices = json.loads(result["choices"][0]["message"]["content"])
+        
+        # Ensure the result is a list of integers
+        if isinstance(indices, list):
+            return [int(idx) for idx in indices if isinstance(idx, (int, str)) and str(idx).isdigit() and 1 <= int(idx) <= hotel_count]
+        return []
+    
+    except (requests.exceptions.RequestException, json.JSONDecodeError, KeyError, ValueError) as e:
+        print(f"Error parsing hotel selection: {str(e)}")
+        # Fall back to simple parsing if the API call fails
+        if user_input.lower() == "all":
+            return list(range(1, hotel_count + 1))
+        else:
+            import re
+            return [int(d) for d in re.findall(r'\d+', user_input) if d.isdigit() and 1 <= int(d) <= hotel_count]

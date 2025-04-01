@@ -1,145 +1,166 @@
 version: "3.1"
 
-
 actions:
   - action_fetch_tender_details
   - action_update_validity_extension
-  - utter_welcome
   - utter_give_information
   - utter_suggest_validity_date
-  - utter_confirm_tender
-  - utter_suggest_hotel_selection
   - utter_confirm_validity_extension
   - utter_extension_success
-  - utter_tender_rejected
   - utter_extension_cancelled
   - utter_free_chitchat_response
-  - action_collect_selected_hotels
-  - action_list_hotels
-
+  - action_get_selected_hotels
 
 slots:
   tender_id:
     type: text
     mappings:
       - type: from_llm
+
+  person_id:
+    type: text
+    mappings:
+      - type: custom
+        action: action_fetch_tender_details
+
   validity_extension_offer:
     type: text
     mappings:
       - type: custom
         action: action_fetch_tender_details
+
   project_name:
     type: text
     mappings:
       - type: custom
         action: action_fetch_tender_details
+
   validity_expired:
     type: bool
     mappings:
       - type: custom
         action: action_fetch_tender_details
+
   tender_type:
     type: text
     mappings:
       - type: custom
         action: action_fetch_tender_details
+
   selected_hotels:
     type: text
     mappings:
       - type: from_llm
-  tender_confirmation:
-    type: bool
-    mappings:
-      - type: from_llm
+
   final_confirmation:
     type: bool
     influence_conversation: true
     initial_value: null
+
   selected_hotels_contacts:
     type: text
     mappings:
-     - type: from_llm
+     - type: custom
+       action: action_get_selected_hotels
+
+  select_hotels_ids:
+    type: list
+    mappings:
+     - type: custom
+       action: action_get_selected_hotels
+
   new_date:
     type: text
     mappings:
      - type: from_llm
+
   date_confirmation:
     type: bool  
     mappings:
      - type: from_llm
+
   user_hotel_selection:
     type: text
     mappings:
      - type: from_llm
+
   hotel_list:
     type: list
     mappings:
       - type: custom
         action: action_fetch_tender_details
+
   hotels_string:
     type: text
     mappings:
       - type: custom
-        action: action_list_hotels
+        action: action_fetch_tender_details
+
   offer_valid_until:
     type: text
     mappings:
       - type: custom
         action: action_fetch_tender_details
+
+  finalized_with_success:
+    type: bool
+    mappings:
+      - type: custom
+        action: action_update_validity_extension
+
 responses:
   utter_welcome:
-    - text: "Hello! I can help you extend the validity date of your tender."
+    - text: "Hello! I'm here to assist you with extending the validity date of your tender."
 
   utter_give_information:
-    - text: "The validity date of the project and offers is expired. To book a hotel you need to extend the validity date. Due to approval processes, we suggest to prolong for at least a few days."
+    - text: "The validity date for the {tender_type} offers related to project {project_name} has expired on {offer_valid_until}. To proceed with booking, you need to extend the validity date. We recommend extending it for at least a few days due to approval processes."
 
   utter_suggest_validity_date:
-    - text: "The validity date for the tender will be prolonged to {validity_extension_offer}."
-
-  utter_confirm_tender:
-    - text: "Do you want to book a {tender_type} for the project {project_name}"
+    - text: "The validity date for the tender will be extended to {validity_extension_offer}."
 
   utter_ask_selected_hotels:
-    - text: "Which hotels should be asked to prolong their offers to {validity_extension_offer}? Please select!
+    - text: "Which hotels would you like to ask for an extension on their offers to {validity_extension_offer}? Please select from the list below: 
         Here are the available hotels and their extension dates:
         {hotels_string}
-        Which hotel do you want to select? You can choose 'all' or a specific hotel number."
+        You can choose 'all' or specify numbers separated by comma."
 
   utter_confirm_validity_extension:
-    - text: "Your request to extend the validity date to {validity_extension_offer} for the selected hotels\n{selected_hotels}\nis being submitted. The hotels will be notified and asked to confirm the extension. You will receive a notification once they respond."
+    - text: "Your request to extend the validity date to {validity_extension_offer} for the selected hotels:\n{selected_hotels_contacts} \n is being processed. The hotels will be notified and asked to confirm the extension. You will receive a notification once they respond."
 
   utter_extension_success:
-    - text: "I have changed the validity date to {validity_extension_offer} and requested new offers. Normally it takes up to 1 business day for suppliers to answer.\n\nIf it is urgent don't hesitate to call the hotel. The contact information for hotels are below;\n{hotel_contacts}"
+    - text: "The validity date has been successfully changed to {validity_extension_offer}, and new offers have been requested. Please allow up to 1 business day for suppliers to respond.\n\nIf this is urgent, feel free to call the hotel directly."
 
   utter_tender_notexpired:
-    - text: "The tender validity date is not expired!, the offer is valid until {offer_valid_until}"
+    - text: "The tender validity date is still active! The offer is valid until {offer_valid_until}. Unfortunately, I cannot assist you with that."
 
   utter_extension_cancelled:
-    - text: "I understand you want to cancel the validity extension. Is there anything else I can help you with?"
-  
+    - text: "I understand that you wish to cancel the validity extension. Is there anything else I can assist you with?"
+
+  utter_extension_failure:
+    - text: "I'm sorry, but I was unable to extend the validity date. Please try again later or contact support for assistance."
+
   utter_ask_tender_confirmation:
     - text: Do you confirm the project and tender you want to change?
 
   utter_ask_final_confirmation:
-    - text: Do you confirm the hotel and date you want to change?
+    - text: "Do you confirm the hotel and date you want to change?"
 
   utter_ask_date_confirmation:
-    - text: Do you confirm the date you want to change?
+    - text: "Can you confirm the date you wish to change?"
 
   utter_ask_new_date:
-    - text: The suggested date is rejected, Please provide a new date in the format dd.mm.year!
- 
+    - text: "The suggested date has been rejected. Please provide a new date in the format dd.mm.yyyy."
 
   utter_free_chitchat_response:
-    - text: "Hi, do you need help?"
+    - text: "Hi there! How can I assist you today?"
       metadata:
         rephrase: True
         rephrase_prompt: |
           The assistant should greet the user.
           The following is a conversation with an AI assistant built with Rasa.
-          The assistant can help the user to change validity date.
+          The assistant can help the user to change the validity date.
           The assistant is helpful, creative, clever, and very friendly.
-          The user may say "I cant book the hotel", "offer is not valid", "How to extend the validity date?", then the assistenat may help from the flow.
+          The user may say "I can't book the hotel", "the offer is not valid", "How do I extend the validity date?", and the assistant may help from the flow.
           The user is making small talk, and the assistant should respond, keeping things light.
           Context / previous conversation with the user:
           {{history}}
