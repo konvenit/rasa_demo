@@ -22,22 +22,18 @@ flows:
       - collect: date_confirmation
         ask_before_filling: true
         next: 
-          - if: "slots.date_confirmation"   # Correct predicate
+          - if: "slots.date_confirmation is not true"   # Correct predicate
             then:
-              
-              - action: utter_suggest_hotel_selection
-                id: suggest_hotel_selection
-                next: collect_hotels
-          - else:
               - collect: new_date
                 ask_before_filling: true
-                next: sug_hotel_selection
-
+              - set_slots:
+                - validity_extension_offer: new_date    
+                next: suggest_hotel_selection           
+          - else: suggest_hotel_selection
       - action: utter_suggest_hotel_selection
-        id: sug_hotel_selection
-        next: collect_hotels
-      - action: action_collect_selected_hotels
-        id: collect_hotels
+        id: suggest_hotel_selection
+      - collect: selected_hotels
+        ask_before_filling: true
         next: confirm_extension
       - action: utter_confirm_validity_extension
         id: confirm_extension

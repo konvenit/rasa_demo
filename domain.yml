@@ -44,7 +44,7 @@ slots:
       - type: custom
         action: action_fetch_tender_details
   selected_hotels:
-    type: list
+    type: text
     mappings:
       - type: from_llm
   tender_confirmation:
@@ -99,7 +99,7 @@ responses:
   utter_confirm_tender:
     - text: "Do you want to book a {tender_type} for the project {project_name}"
 
-  utter_suggest_hotel_selection:
+  utter_ask_selected_hotels:
     - text: "Which hotels should be asked to prolong their offers to {validity_extension_offer}? Please select!
         Here are the available hotels and their extension dates:
         {hotels_string}
