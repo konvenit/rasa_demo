@@ -127,12 +127,8 @@ class ActionExtendValidity(Action):
                 negotiation_ids=selected_hotels
             )
             
-            # Return success slot
-            if response.status_code == 200:
-                return [SlotSet("finalized_with_success", True)]
-            else:
-                return [SlotSet("finalized_with_success", False)]
-            
+            return [SlotSet("finalized_with_success", True)]
+                
         except Exception as e:
             # Log the error but don't send messages
             print(f"Error extending validity: {str(e)}")
