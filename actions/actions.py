@@ -127,4 +127,4 @@ class ActionListHotels(Action):
         hotels_string = "\n".join(
                 [f"{i+1}. {hotel['name']}" for i, hotel in enumerate(hotels) if hotel.get("name")]
             )
-        return [SlotSet("hotels_string", hotels_string )]
+        return [SlotSet("hotels_string", hotels_string)]

@@ -35,6 +35,7 @@ flows:
 
       - action: utter_suggest_hotel_selection
         id: sug_hotel_selection
+        next: collect_hotels
       - action: action_collect_selected_hotels
         id: collect_hotels
         next: confirm_extension
