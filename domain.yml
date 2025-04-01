@@ -33,8 +33,8 @@ slots:
     mappings:
       - type: custom
         action: action_fetch_tender_details
-  project_id:
-    type: text
+  validity_expired:
+    type: bool
     mappings:
       - type: custom
         action: action_fetch_tender_details
@@ -64,7 +64,7 @@ slots:
     mappings:
      - type: from_llm
   date_confirmation:
-    type: text
+    type: bool  
     mappings:
      - type: from_llm
   user_hotel_selection:
@@ -81,8 +81,11 @@ slots:
     mappings:
       - type: custom
         action: action_list_hotels
-
-
+  offer_valid_until:
+    type: text
+    mappings:
+      - type: custom
+        action: action_fetch_tender_details
 responses:
   utter_welcome:
     - text: "Hello! I can help you extend the validity date of your tender."
@@ -109,7 +112,7 @@ responses:
     - text: "I have changed the validity date to {validity_extension_offer} and requested new offers. Normally it takes up to 1 business day for suppliers to answer.\n\nIf it is urgent don't hesitate to call the hotel. The contact information for hotels are below;\n{hotel_contacts}"
 
   utter_tender_notexpired:
-    - text: "The tender validity date is not expired!"
+    - text: "The tender validity date is not expired!, the offer is valid until {offer_valid_until}"
 
   utter_extension_cancelled:
     - text: "I understand you want to cancel the validity extension. Is there anything else I can help you with?"
