@@ -15,6 +15,7 @@ actions:
   - utter_extension_cancelled
   - utter_free_chitchat_response
   - action_collect_selected_hotels
+  - action_list_hotels
 
 
 slots:
@@ -58,7 +59,7 @@ slots:
     type: text
     mappings:
      - type: from_llm
-  ask_new_date:
+  new_date:
     type: text
     mappings:
      - type: from_llm
@@ -67,13 +68,24 @@ slots:
     mappings:
      - type: from_llm
   user_hotel_selection:
-    type: string
+    type: text
     mappings:
      - type: from_llm
+  hotel_list:
+    type: list
+    mappings:
+      - type: custom
+        action: action_fetch_tender_details
+  hotels_string:
+    type: text
+    mappings:
+      - type: custom
+        action: action_list_hotels
+
 
 responses:
   utter_welcome:
-    - text: "Hello! I can help you extend the validity date of your tender?"
+    - text: "Hello! I can help you extend the validity date of your tender."
 
   utter_give_information:
     - text: "The validity date of the project and offers is expired. To book a hotel you need to extend the validity date. Due to approval processes, we suggest to prolong for at least a few days."
@@ -82,22 +94,22 @@ responses:
     - text: "The validity date for the tender will be prolonged to {validity_extension_offer}."
 
   utter_confirm_tender:
-    - text: "I see, do you want to book a {tender_type} for the project {project_id} - {project_name}"
+    - text: "Do you want to book a {tender_type} for the project {project_name}"
 
   utter_suggest_hotel_selection:
     - text: "Which hotels should be asked to prolong their offers to {validity_extension_offer}? Please select!
         Here are the available hotels and their extension dates:
-        {hotels_list}
-        Which hotel do you want to select? You can choose 'all' or a specific hotel name."
+        {hotels_string}
+        Which hotel do you want to select? You can choose 'all' or a specific hotel number."
 
   utter_confirm_validity_extension:
-    - text: "Your request to extend the validity date to {validity_extension_offer} for the selected hotels\n{selected_hotels}\nis being submitted. The hotels will be notified and asked to confirm the extension. You will receive a notification once they respond.\n\nDo you confirm?"
+    - text: "Your request to extend the validity date to {validity_extension_offer} for the selected hotels\n{selected_hotels}\nis being submitted. The hotels will be notified and asked to confirm the extension. You will receive a notification once they respond."
 
   utter_extension_success:
     - text: "I have changed the validity date to {validity_extension_offer} and requested new offers. Normally it takes up to 1 business day for suppliers to answer.\n\nIf it is urgent don't hesitate to call the hotel. The contact information for hotels are below;\n{hotel_contacts}"
 
-  utter_tender_rejected:
-    - text: "I understand you don't want to proceed with this tender. Is there anything else I can help you with?"
+  utter_tender_notexpired:
+    - text: "The tender validity date is not expired!"
 
   utter_extension_cancelled:
     - text: "I understand you want to cancel the validity extension. Is there anything else I can help you with?"
@@ -106,28 +118,31 @@ responses:
     - text: Do you confirm the project and tender you want to change?
 
   utter_ask_final_confirmation:
-    - text: Do you confirm the project and tender you want to change?
+    - text: Do you confirm the hotel and date you want to change?
 
   utter_ask_date_confirmation:
     - text: Do you confirm the date you want to change?
 
   utter_ask_new_date:
-    - text: The suggested date is rejected, Please provide a new date!
+    - text: The suggested date is rejected, Please provide a new date in the format dd.mm.year!
  
 
   utter_free_chitchat_response:
-    - text: "placeholder"
+    - text: "Hi, do you need help?"
       metadata:
         rephrase: True
         rephrase_prompt: |
+          The assistant should greet the user.
           The following is a conversation with an AI assistant built with Rasa.
           The assistant can help the user to change validity date.
           The assistant is helpful, creative, clever, and very friendly.
+          The user may say "I cant book the hotel", "offer is not valid", "How to extend the validity date?", then the assistenat may help from the flow.
           The user is making small talk, and the assistant should respond, keeping things light.
           Context / previous conversation with the user:
           {{history}}
           {{current_input}}
           Suggested AI Response:
+
 session_config:
   session_expiration_time: 60 # Set to 60 minutes (adjust as needed)
   carry_over_slots_to_new_session: true

@@ -4,36 +4,37 @@ flows:
     description: Change the validity date and handle related tasks
   
     steps:
-      - action: utter_welcome
       - action: action_fetch_tender_details
-        next: confirm_tender
-      - action: utter_confirm_tender
-        id: confirm_tender
-      - collect: tender_confirmation
-        ask_before_filling: true
-        next:
-          - if: "slots.tender_confirmation"   # Correct predicate
+        next: 
+          - if: "slots.validity_expired"
             then:
               - action: utter_give_information
                 id: give_information
                 next: suggest_validity_date
           - else:
-              - action: utter_tender_rejected
+              - action: utter_tender_notexpired
                 next: END
-
       - action: utter_suggest_validity_date
         id: suggest_validity_date
+        next: hotels_list
+      - action: action_list_hotels
+        id: hotels_list
       - collect: date_confirmation
         ask_before_filling: true
         next: 
           - if: "slots.date_confirmation"   # Correct predicate
             then:
+              
               - action: utter_suggest_hotel_selection
                 id: suggest_hotel_selection
                 next: collect_hotels
           - else:
-              - action: utter_ask_new_date
-                next: END
+              - collect: new_date
+                ask_before_filling: true
+                next: sug_hotel_selection
+
+      - action: utter_suggest_hotel_selection
+        id: sug_hotel_selection
       - action: action_collect_selected_hotels
         id: collect_hotels
         next: confirm_extension

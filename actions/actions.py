@@ -33,7 +33,7 @@ class ActionFetchTenderDetails(Action):
                     "name": negotiation.get("supplier_name"),
                     "phone": negotiation.get("phone_number")
                 })
-            
+            print(hotels,"hotels_ramyas")
             return [
                 SlotSet("project_name", tender_response.project_name),
                 SlotSet("tender_id", str(tender_response.tender_id)),
@@ -111,3 +111,20 @@ class ActionExtendValidity(Action):
             # Log the error but don't send messages
             print(f"Error extending validity: {str(e)}")
             return [SlotSet("extension_success", False)]
+        
+
+class ActionListHotels(Action):
+    def name(self) -> str:
+        return "action_list_hotels"
+
+    def run(
+        self, dispatcher: CollectingDispatcher, tracker: Tracker, domain: Dict[str, Any]    ) -> List[Dict[Text, Any]]:
+        # Get the list of hotels from the slot
+        hotels = tracker.get_slot("hotel_list")
+
+        
+            # Extract hotel names and format them in a numbered list
+        hotels_string = "\n".join(
+                [f"{i+1}. {hotel['name']}" for i, hotel in enumerate(hotels) if hotel.get("name")]
+            )
+        return [SlotSet("hotels_string", hotels_string )]
